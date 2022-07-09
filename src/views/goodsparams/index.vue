@@ -1,0 +1,21 @@
+<template>
+  <div>商品参数</div>
+</template>
+
+<script>
+export default {
+  name: 'goodsparams',
+  created () { },
+  data () {
+    return {}
+  },
+  methods: {},
+  computed: {},
+  watch: {},
+  filters: {},
+  components: {}
+}
+</script>
+
+<style scoped lang='less'>
+</style>
