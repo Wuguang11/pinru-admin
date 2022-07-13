@@ -1,10 +1,10 @@
 <template>
-  <div>商品参数</div>
+  <div>欢迎登录</div>
 </template>
 
 <script>
 export default {
-  name: 'goodsparams',
+  name: 'firstpage',
   created () { },
   data () {
     return {}
@@ -17,5 +17,5 @@ export default {
 }
 </script>
 
-<style scoped lang='less'>
+<style scoped>
 </style>

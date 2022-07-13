@@ -1,5 +1,5 @@
 <template>
-  <el-container class="container">
+  <el-container class="container" v-if="flag">
     <el-header>
       <div class="logo">
         <el-avatar
@@ -27,19 +27,18 @@
           @open="handleOpen"
           @close="handleClose"
           :collapse="isCollapse"
-          default-active="1-1"
           router
         >
           <!-- 第一栏  -->
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-user-solid"></i>
-              <span slot="title">用户管理</span>
+              <span slot="title">{{ menus[0].authName }}</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="1-1" :route="{ path: list[0].path }">
                 <i class="el-icon-menu"></i>
-                <span slot="title">用户列表</span>
+                <span slot="title">{{ menus[0].children[0].authName }}</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -47,16 +46,16 @@
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-turn-off"></i>
-              <span slot="title">权限管理</span>
+              <span slot="title">{{ menus[1].authName }}</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="2-1" :route="{ path: list[1].path }">
                 <i class="el-icon-menu"></i>
-                <span slot="title">角色列表</span>
+                <span slot="title">{{ menus[1].children[0].authName }}</span>
               </el-menu-item>
               <el-menu-item index="2-2" :route="{ path: list[2].path }">
                 <i class="el-icon-menu"></i>
-                <span slot="title">权限列表</span>
+                <span slot="title">{{ menus[1].children[1].authName }}</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -64,20 +63,20 @@
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-suitcase"></i>
-              <span slot="title">商品管理</span>
+              <span slot="title">{{ menus[2].authName }}</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="3-1" :route="{ path: list[3].path }">
                 <i class="el-icon-menu"></i>
-                <span slot="title">商品列表</span>
+                <span slot="title">{{ menus[2].children[0].authName }}</span>
               </el-menu-item>
               <el-menu-item index="3-2" :route="{ path: list[4].path }">
                 <i class="el-icon-menu"></i>
-                <span slot="title">分类参数</span>
+                <span slot="title">{{ menus[2].children[1].authName }}</span>
               </el-menu-item>
               <el-menu-item index="3-3" :route="{ path: list[5].path }">
                 <i class="el-icon-menu"></i>
-                <span slot="title">商品参数</span>
+                <span slot="title">{{ menus[2].children[2].authName }}</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -85,12 +84,12 @@
           <el-submenu index="4">
             <template slot="title">
               <i class="el-icon-notebook-2"></i>
-              <span slot="title">订单管理</span>
+              <span slot="title">{{ menus[3].authName }}</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="4-1" :route="{ path: list[6].path }">
                 <i class="el-icon-menu"></i>
-                <span slot="title">订单列表</span>
+                <span slot="title">{{ menus[3].children[0].authName }}</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -98,12 +97,12 @@
           <el-submenu index="5">
             <template slot="title">
               <i class="el-icon-pie-chart"></i>
-              <span slot="title">数据分析</span>
+              <span slot="title">{{ menus[4].authName }}</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="5-1" :route="{ path: list[7].path }">
                 <i class="el-icon-menu"></i>
-                <span slot="title">数据报表</span>
+                <span slot="title">{{ menus[4].children[0].authName }}</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -118,16 +117,32 @@
 </template>
 
 <script>
+import { getMenus } from '@/api/home'
 export default {
   name: 'Home',
-  created () {
+  async created () {
+    // 获取二级路由参数
     this.list = this.$router.options.routes[2].children
-    console.log(this.list)
+    // 请求获取列表参数
+    try {
+      const { data: res } = await getMenus()
+      // console.log(res.data)
+      this.menus = res.data
+      this.$store.commit('updateMenus', res.data)
+      // 在data中定义了这个userserverData，页面打开时就会将这个值给渲染进去，但是在发送请求之前就渲染了这个值，导致报错说找不到这个值里面的东西。所以我们需要在请求到值之后再去渲染出来。
+      this.flag = true
+    } catch (err) {
+      this.$message.error('获取数据失败')
+    }
   },
   data () {
     return {
       isCollapse: false,
-      list: []
+      list: [],
+      // 请求获得列表参数
+      menus: [],
+      // 控制整个界面的显示
+      flag: false
     }
   },
   methods: {
@@ -173,7 +188,7 @@ export default {
     }
   }
   .el-main {
-    background-color: #fff;
+    background-color: #eaedf1;
   }
 }
 // 控制侧边栏收起时弹窗

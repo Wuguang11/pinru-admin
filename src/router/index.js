@@ -9,16 +9,17 @@ const routes = [
   {
     path: '/home',
     component: () => import('@/views/home'),
-    redirect: 'home/userlist',
+    redirect: 'home/firstpage',
     children: [
       { path: 'userlist', component: () => import('@/views/userlist') },
       { path: 'roleslist', component: () => import('@/views/roleslist') },
       { path: 'rightslist', component: () => import('@/views/rightslist') },
       { path: 'goodslist', component: () => import('@/views/goodslist') },
       { path: 'sortparams', component: () => import('@/views/sortparams') },
-      { path: 'goodsparams', component: () => import('@/views/goodsparams') },
+      { path: 'goodsorts', component: () => import('@/views/goodsorts') },
       { path: 'orderparams', component: () => import('@/views/orderlist') },
-      { path: 'datarepots', component: () => import('@/views/datareports') }
+      { path: 'datarepots', component: () => import('@/views/datareports') },
+      { path: 'firstpage', component: () => import('@/views/firstpage') }
     ]
   }
 ]

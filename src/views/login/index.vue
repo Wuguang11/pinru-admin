@@ -57,8 +57,10 @@ export default {
       try {
         await this.$refs.loginFormRef.validate()
         try {
-          await login(this.loginForm)
+          const { data: res } = await login(this.loginForm.username, this.loginForm.password)
+
           // todo 把token储存到xuex中 和本地存储 数据持久化
+          this.$store.commit('setUser', res.data.token)
           this.$router.push('/home')
         } catch (err) {
           this.$message.error('登录失败')

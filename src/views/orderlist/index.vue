@@ -1,8 +1,11 @@
 <template>
-  <div>订单列表</div>
+  <div>
+    <BreadCrumb :menus="$store.state.menusInfo[3]" index="0"></BreadCrumb>
+  </div>
 </template>
 
 <script>
+import BreadCrumb from '@/components/BreadCrumb.vue'
 export default {
   name: 'orderlist',
   created () { },
@@ -13,7 +16,7 @@ export default {
   computed: {},
   watch: {},
   filters: {},
-  components: {}
+  components: { BreadCrumb }
 }
 </script>
 
