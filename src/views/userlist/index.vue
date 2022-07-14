@@ -48,17 +48,25 @@
               type="primary"
               icon="el-icon-edit"
               size="mini"
-              @click="editUserInfo(scope.row.username)"
+              @click="editUserInfo(scope.row.username, scope.row.id)"
             ></el-button>
             <el-button
               type="danger"
               icon="el-icon-delete"
               size="mini"
+              @click="deletUser(scope.row.id)"
             ></el-button>
             <el-button
               type="warning"
               icon="el-icon-setting"
               size="mini"
+              @click="
+                changeUserRole(
+                  scope.row.username,
+                  scope.row.role_name,
+                  scope.row.id
+                )
+              "
             ></el-button>
           </template>
         </el-table-column>
@@ -86,17 +94,26 @@
     </el-dialog>
     <!-- 编辑用户弹窗 -->
     <el-dialog title="编辑用户" :visible.sync="dialogShow">
-      <EditUsers :username="dialogUsername"></EditUsers>
+      <EditUsers :username="dialogUsername" @editUser="getEditUser"></EditUsers>
+    </el-dialog>
+    <!-- 分配角色弹窗 -->
+    <el-dialog title="分配角色" :visible.sync="changeRoleShow" width="600px">
+      <ChangeRole
+        :nowObj="nowObj"
+        @updateRole="updateRole"
+        @cancleUpdateRole="changeRoleShow = false"
+      ></ChangeRole>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getPageInfo, filterPageInfo, addUser, changeUserState } from '@/api/userlist'
+import { getPageInfo, filterPageInfo, addUser, changeUserState, editUser, delUser } from '@/api/userlist'
 import BreadCrumb from '@/components/BreadCrumb.vue'
 import InputInfo from '@/components/InputInfo.vue'
 import AddUsers from '@/views/userlist/components/AddUsers.vue'
 import EditUsers from '@/views/userlist/components/EditUsers.vue'
+import ChangeRole from '@/views/userlist/components/ChangeRole.vue'
 export default {
   name: 'userlist',
   created () {
@@ -123,7 +140,13 @@ export default {
       // 控制编辑用户显示
       dialogShow: false,
       // 传递给编辑用户弹窗的数据
-      dialogUsername: ''
+      dialogUsername: '',
+      // 点击编辑按钮的用户id
+      editUserId: '',
+      // 控制分配角色弹窗的显示
+      changeRoleShow: false,
+      // 传递给弹窗的数据
+      nowObj: {}
     }
   },
   methods: {
@@ -173,6 +196,8 @@ export default {
       try {
         const res = await addUser(val)
         this.$message(res.data.meta.msg)
+        // 重新获取本页数据
+        this.getPageData()
       } catch (err) {
         this.$message.error('添加用户失败,请重试')
       }
@@ -189,16 +214,69 @@ export default {
     },
     // 编辑区域
     // 点击编辑按钮触发
-    editUserInfo (val) {
+    editUserInfo (val, id) {
       // this.$message(val)
       this.dialogShow = true
       this.dialogUsername = val
+      this.editUserId = id
+      // console.log(this.editUserId)
+    },
+    // 编辑用户弹窗的回调
+    async getEditUser (val) {
+      this.dialogShow = false
+      console.log(val)
+      // 发送请求修改用户数据
+      const { data: res } = await editUser(this.editUserId, val)
+      this.$$message.success('修改用户数据成功')
+      // 修改表格的数据
+      this.tableData.forEach(item => {
+        if (item.id === this.editUserId) {
+          item.mobile = res.data.mobile
+          item.email = res.data.email
+        }
+      })
+    },
+    // 删除用户
+    deletUser (id) {
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        // console.log(id)
+        // 发请求删除用户
+        const res = await delUser(id)
+        // 重新获取本页数据
+        this.getPageData()
+        this.$message({
+          type: 'success',
+          message: res.data.meta.msg
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 改变用户角色
+    changeUserRole (username, roleName, id) {
+      this.changeRoleShow = true
+      this.nowObj.username = username
+      this.nowObj.roleName = roleName
+      this.nowObj.id = id
+    },
+    // 改变用户角色子组件传递数据的回调
+    updateRole () {
+      this.changeRoleShow = false
+      // 重新获取本页数据
+      this.getPageData()
     }
   },
   computed: {},
   watch: {},
   filters: {},
-  components: { BreadCrumb, InputInfo, AddUsers, EditUsers }
+  components: { BreadCrumb, InputInfo, AddUsers, EditUsers, ChangeRole }
 }
 </script>
 

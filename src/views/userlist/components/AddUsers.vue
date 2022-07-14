@@ -83,6 +83,7 @@ export default {
         if (valid) {
           // console.log(this.ruleForm)
           this.$emit('getDialogIpt', this.ruleForm)
+          this.$refs[formName].resetFields()
         } else {
           console.log('error submit!!')
           return false

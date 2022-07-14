@@ -22,7 +22,9 @@
       </el-form-item>
       <el-form-item class="btn">
         <el-button @click="resetForm('ruleForm')">重置</el-button>
-        <el-button type="primary">提交</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >提交</el-button
+        >
       </el-form-item>
     </el-form>
   </div>
@@ -38,7 +40,6 @@ export default {
     }
   },
   created () {
-    this.ruleForm.username = this.username
   },
   data () {
     const checkEmail = (rule, value, callback) => {
@@ -76,8 +77,9 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // console.log(this.ruleForm)
-          // this.$emit('getDialogIpt', this.ruleForm)
+          console.log(this.ruleForm)
+          this.$emit('editUser', this.ruleForm)
+          this.$emit('getDialogIpt', this.ruleForm)
         } else {
           console.log('error submit!!')
           return false
