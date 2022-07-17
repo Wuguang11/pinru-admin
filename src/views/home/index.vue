@@ -1,5 +1,5 @@
 <template>
-  <el-container class="container" v-if="flag">
+  <el-container class="container" v-if="flag" style="over-flow: hidden">
     <el-header>
       <div class="logo">
         <el-avatar
