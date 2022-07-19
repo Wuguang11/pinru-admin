@@ -34,6 +34,7 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-backtop></el-backtop>
   </div>
 </template>
 
@@ -53,7 +54,6 @@ export default {
   methods: {
     async getRightListener () {
       const { data: res } = await getRightListener()
-      console.log(res.data)
       this.tableData = res.data
     }
   },

@@ -29,3 +29,10 @@ export const getTreeList = () => {
     url: 'rights/tree'
   })
 }
+export const submitCheckedList = (id, data) => {
+  return request({
+    method: 'POST',
+    url: `roles/${id}/rights`,
+    data
+  })
+}
