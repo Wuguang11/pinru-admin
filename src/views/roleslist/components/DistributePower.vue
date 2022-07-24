@@ -1,28 +1,33 @@
 <template>
-  <div v-if="thirdIdArr">
+  <div>
     <el-tree
+      ref="myTree"
       :data="data"
       show-checkbox
       node-key="id"
       default-expand-all
-      :default-checked-keys="[101]"
+      :default-checked-keys="checkedArr"
       :props="defaultProps"
     >
     </el-tree>
     <div class="btn">
       <el-button @click="$emit('cancle')">取消</el-button>
-      <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+      <el-button type="primary" @click="onClick">确定</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { getTreeList } from '@/api/rolelist'
+import { getTreeList, submitCheckedList } from '@/api/rolelist'
 export default {
   name: 'DistributePower',
   props: {
     thirdIdArr: {
       type: Array,
+      required: true
+    },
+    id: {
+      type: [Number, String],
       required: true
     }
   },
@@ -31,21 +36,22 @@ export default {
   },
   data () {
     return {
-      //
+      // 数据
       data: [],
       defaultProps: {
         children: 'children',
         label: 'label'
       },
-      thirdId: []
+      checkedArr: []
     }
   },
   methods: {
     // 获取树形图数据
     async getTreeList () {
-      const { data: res } = await getTreeList()
-      // console.log(res)
+      this.checkedArr = []
       try {
+        const { data: res } = await getTreeList()
+        // console.log(res)
         this.data = res.data
         // 使用递归给data数据里面增加label属性
         function changeTreeData (data) {
@@ -61,16 +67,28 @@ export default {
         // 获取默认展开的id
         const arr = []
         this.thirdIdArr.forEach(item => {
-          item.children.forEach(item1 => {
-            item1.children.forEach(item2 => {
-              arr.push(item2.id)
+          item.children.forEach(item2 => {
+            item2.children.forEach(item3 => {
+              arr.push(item3.id)
             })
           })
         })
-        this.thirdId = arr
-        this.data = changeTreeData(this.data)
+        this.checkedArr = arr
       } catch (err) {
         this.$message(err)
+      }
+    },
+    // 点击分配权限
+    async onClick () {
+      try {
+        const obj = {}
+        obj.rids = this.$refs.myTree.getCheckedKeys().join(',')
+        const res = await submitCheckedList(this.id, obj)
+        console.log(res)
+        this.$message.success(res.data.meta.msg)
+        this.$emit('cancle')
+      } catch (err) {
+        this.$message.error(err)
       }
     }
   },

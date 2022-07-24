@@ -87,8 +87,10 @@
     <!-- 分配权限弹窗 -->
     <el-dialog title="分配权限" :visible.sync="powerDialogShow">
       <DistributePower
+        v-if="powerDialogShow"
         @cancle="powerDialogShow = false"
         :thirdIdArr="thirdIdArr"
+        :id="expandId"
       ></DistributePower>
     </el-dialog>
   </div>
@@ -119,7 +121,7 @@ export default {
     async getTabInfo () {
       try {
         const { data: res } = await getRolesTabInfo()
-        // console.log(res.data)
+        console.log(res.data)
         this.tableData = res.data
       } catch (error) {
         this.$message.error('获取数据失败，请于后台管理员联系')
@@ -155,7 +157,6 @@ export default {
     // 表格展开时触发，用来发删除得请求
     change (row) {
       // 拿到展开行的id
-      // console.log(row.id)
       this.expandId = row.id
     },
     // 点击分配权限按钮触发
@@ -163,55 +164,17 @@ export default {
       // 显示弹窗
       this.powerDialogShow = true
       console.log(id)
-      // 获取三级id
+      this.expandId = id
+      // 获取传递给子组件获取三级id的数据
       this.tableData.forEach(item => {
         if (item.id === id) {
-          // item.children.forEach(item1 => {
-          //   console.log(item1)
-          //   item1.children.forEach(item2 => {
-          //     item2.chiforEach(item3 => {
-          //       arr.push(item3.id)
-          //     })
-          //   })
-          // })
-          // function getThirdId (arr) {
-          //   const arr1 = []
-          //   arr.forEach(item => {
-          //     if (item.children) {
-          //       getThirdId(item.children)
-          //     } else {
-          //       arr1.push(item.id)
-          //     }
-          //   })
-          //   return arr1
-          // }
-          // console.log(getThirdId(item.children))
           this.thirdIdArr = item.children
         }
       })
     }
   },
   computed: {},
-  watch: {
-    // 监听表格数据获得三级id
-    tableData (newval) {
-      // const arr = []
-      // function getId (data) {
-      //   data.forEach(item => {
-      //     if (item.children) {
-      //       getId(item.children)
-      //     } else {
-      //       arr.push(item.id)
-      //     }
-      //   })
-      //   return arr
-      // }
-      // console.log(getId(newval))
-
-      // })
-      // this.thirdId = getId(newval)
-    }
-  },
+  watch: {},
   filters: {},
   components: { BreadCrumb, DistributePower }
 }

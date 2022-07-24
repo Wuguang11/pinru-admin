@@ -19,7 +19,8 @@ const routes = [
       { path: 'goodsorts', component: () => import('@/views/goodsorts') },
       { path: 'orderparams', component: () => import('@/views/orderlist') },
       { path: 'datarepots', component: () => import('@/views/datareports') },
-      { path: 'firstpage', component: () => import('@/views/firstpage') }
+      { path: 'firstpage', component: () => import('@/views/firstpage') },
+      { path: 'addgoods', component: () => import('@/views/addgoods') }
     ]
   }
 ]
