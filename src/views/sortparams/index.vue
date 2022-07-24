@@ -284,6 +284,7 @@ export default {
         // 获取静态参数表格的数据
         this.getStaticTabData()
       } else {
+        this.isBtnClick = true
         this.$message.error('请选择三级分类')
         this.dynamicTableData = []
       }
