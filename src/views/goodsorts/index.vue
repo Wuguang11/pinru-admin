@@ -113,7 +113,6 @@ import BreadCrumb from '@/components/BreadCrumb.vue'
 import { getGoodSortData, addGoodsSorts } from '@/api/goodsorts'
 export default {
   name: 'goodsorts',
-
   created () {
     this.getGoodSortData()
   },
